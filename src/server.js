@@ -4,7 +4,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 
 import sequelize from "./config/database.js";
-import redisClient from "./config/redis.js";
+
 import authRouter from "./routes/auth.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 
@@ -39,8 +39,7 @@ const startServer = async () => {
     await sequelize.sync();
     console.log("Database tables synchronized");
 
-    await redisClient.connect();
-    console.log("Redis connected");
+   
 
     app.listen(process.env.PORT, () => {
       console.log(`Server running on port ${process.env.PORT}`);
