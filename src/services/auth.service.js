@@ -135,6 +135,13 @@ export const refreshTokenService = async (
       process.env.REFRESH_TOKEN_SECRET
     );
 
+    if (await redisClient.get(`blacklist:${decoded.jti}`)) {
+      throw new AppError(
+        "Invalid or expired refresh token",
+        STATUS_CODES.UNAUTHORIZED
+      );
+    }
+
     const user = await User.findByPk(decoded.id);
 
     if (!user) {
@@ -175,7 +182,7 @@ export const refreshTokenService = async (
   }
 };
 
-export const logoutService = async (user) => {
+export const logoutService = async (user, refreshToken) => {
   const { jti, exp } = user;
 
   const currentTime = Math.floor(Date.now() / 1000);
@@ -190,6 +197,27 @@ export const logoutService = async (user) => {
         EX: remainingTime,
       }
     );
+  }
+
+  if (refreshToken) {
+    try {
+      const decodedRefreshToken = jwt.verify(
+        refreshToken,
+        process.env.REFRESH_TOKEN_SECRET
+      );
+      const refreshRemainingTime =
+        decodedRefreshToken.exp - currentTime;
+
+      if (refreshRemainingTime > 0) {
+        await redisClient.set(
+          `blacklist:${decodedRefreshToken.jti}`,
+          "true",
+          { EX: refreshRemainingTime }
+        );
+      }
+    } catch {
+      
+    }
   }
 };
 

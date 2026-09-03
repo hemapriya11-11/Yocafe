@@ -1,5 +1,5 @@
-import "dotenv/config";
 import { Sequelize } from "sequelize";
+import { dbPort } from "./env.js";
 
 const sequelize = new Sequelize(
   process.env.DB_NAME,
@@ -7,7 +7,7 @@ const sequelize = new Sequelize(
   process.env.DB_PASSWORD,
   {
     host: process.env.DB_HOST,
-    port: Number(process.env.DB_PORT),
+    port: dbPort,
     dialect: "mysql",
     logging: false,
   }

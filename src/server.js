@@ -1,6 +1,6 @@
-import dotenv from "dotenv";
 import express from "express";
 import cookieParser from "cookie-parser";
+import { port } from "./config/env.js";
 
 import sequelize from "./config/database.js";
 import redisClient from "./config/redis.js";
@@ -9,9 +9,8 @@ import authRouter from "./routes/auth.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
 import cors from "cors"
 
-dotenv.config();
-
 const app = express();
+app.disable("x-powered-by");
 
 app.use(
   cors({
@@ -20,7 +19,7 @@ app.use(
   })
 );
 
-app.use(express.json());
+app.use(express.json({ limit: "10kb" }));
 app.use(cookieParser());
 
 app.use("/auth", authRouter);
@@ -36,9 +35,9 @@ console.log("MySQL connected");
 await redisClient.connect();
 console.log("Redis connected");
 
-app.listen(process.env.PORT, () => {
+app.listen(port, () => {
   console.log(
-    `Server running on port ${process.env.PORT}`
+    `Server running on port ${port}`
   );
 });
 

@@ -101,7 +101,7 @@ next(error);
 
 export const logout = async (req, res, next) => {
 try {
-await logoutService(req.user);
+await logoutService(req.user, req.cookies.refreshToken);
 
 
 res.clearCookie("refreshToken", {

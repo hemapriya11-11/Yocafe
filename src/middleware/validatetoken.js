@@ -12,9 +12,9 @@ export const verifytoken = async (req, res, next) => {
     return res.status(STATUS_CODES.UNAUTHORIZED).send(MESSAGES.TOKEN_REQUIRED);
   }
 
-  const token = authHeader.split(" ")[1];
+  const [scheme, token] = authHeader.trim().split(/\s+/);
 
-  if (!token) {
+  if (scheme !== "Bearer" || !token) {
     return res
       .status(STATUS_CODES.UNAUTHORIZED)
       .send(MESSAGES.INVALID_TOKEN_FORMAT);

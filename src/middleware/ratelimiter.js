@@ -1,4 +1,5 @@
 import redisClient from "../config/redis.js";
+import { STATUS_CODES } from "../constants/statusCodes.js";
 
 export const rateLimiter = async (req, res, next) => {
   try {
