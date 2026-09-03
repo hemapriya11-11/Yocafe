@@ -46,4 +46,3 @@ coverage/
 # Docker volumes
 
 mysql-data/
-redis-data/

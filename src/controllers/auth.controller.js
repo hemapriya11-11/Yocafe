@@ -4,7 +4,6 @@ loginService,
 forgotPasswordService,
 resetPasswordService,
 refreshTokenService,
-logoutService,
 } from "../services/auth.service.js";
 
 import { STATUS_CODES } from "../constants/statusCodes.js";
@@ -101,9 +100,6 @@ next(error);
 
 export const logout = async (req, res, next) => {
 try {
-await logoutService(req.user, req.cookies.refreshToken);
-
-
 res.clearCookie("refreshToken", {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",

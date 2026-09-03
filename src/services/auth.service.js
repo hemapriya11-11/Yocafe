@@ -9,7 +9,6 @@ import { MESSAGES } from "../constants/messages.js";
 import { sendResetEmail } from "../utils/sendEmail.js";
 import { AppError } from "../utils/appError.js";
 
-import redisClient from "../config/redis.js";
 
 export const signupService = async ({
   name,
@@ -90,14 +89,6 @@ export const forgotPasswordService = async ({
     process.env.RESET_TOKEN_SECRET
   );
 
-  await redisClient.set(
-    `reset:${user.id}`,
-    token,
-    {
-      EX: 15 * 60,
-    }
-  );
-
   await sendResetEmail(user.email, token);
 };
 
@@ -116,7 +107,6 @@ export const resetPasswordService = async ({
     }
   );
 
-  await redisClient.del(`reset:${userId}`);
 };
 
 export const refreshTokenService = async (
@@ -134,13 +124,6 @@ export const refreshTokenService = async (
       refreshToken,
       process.env.REFRESH_TOKEN_SECRET
     );
-
-    if (await redisClient.get(`blacklist:${decoded.jti}`)) {
-      throw new AppError(
-        "Invalid or expired refresh token",
-        STATUS_CODES.UNAUTHORIZED
-      );
-    }
 
     const user = await User.findByPk(decoded.id);
 
@@ -179,45 +162,6 @@ export const refreshTokenService = async (
       "Invalid or expired refresh token",
       STATUS_CODES.UNAUTHORIZED
     );
-  }
-};
-
-export const logoutService = async (user, refreshToken) => {
-  const { jti, exp } = user;
-
-  const currentTime = Math.floor(Date.now() / 1000);
-
-  const remainingTime = exp - currentTime;
-
-  if (remainingTime > 0) {
-    await redisClient.set(
-      `blacklist:${jti}`,
-      "true",
-      {
-        EX: remainingTime,
-      }
-    );
-  }
-
-  if (refreshToken) {
-    try {
-      const decodedRefreshToken = jwt.verify(
-        refreshToken,
-        process.env.REFRESH_TOKEN_SECRET
-      );
-      const refreshRemainingTime =
-        decodedRefreshToken.exp - currentTime;
-
-      if (refreshRemainingTime > 0) {
-        await redisClient.set(
-          `blacklist:${decodedRefreshToken.jti}`,
-          "true",
-          { EX: refreshRemainingTime }
-        );
-      }
-    } catch {
-      
-    }
   }
 };
 

@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
 
 import User from "../models/User.js";
-import redisClient from "../config/redis.js";
 
 import { AppError } from "../utils/appError.js";
 import { MESSAGES } from "../constants/messages.js";
@@ -17,17 +16,6 @@ export const verifyResetToken = async (req, res, next) => {
     );
 
     if (decoded.type !== "password-reset") {
-      throw new AppError(
-        MESSAGES.INVALID_TOKEN,
-        STATUS_CODES.BAD_REQUEST
-      );
-    }
-
-    const storedToken = await redisClient.get(
-      `reset:${decoded.id}`
-    );
-
-    if (!storedToken || storedToken !== token) {
       throw new AppError(
         MESSAGES.INVALID_TOKEN,
         STATUS_CODES.BAD_REQUEST

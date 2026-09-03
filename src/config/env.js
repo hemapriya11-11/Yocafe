@@ -5,7 +5,6 @@ const required = [
   "DB_NAME",
   "DB_USER",
   "DB_PASSWORD",
-  "REDIS_URL",
   "ACCESS_TOKEN_SECRET",
   "REFRESH_TOKEN_SECRET",
   "RESET_TOKEN_SECRET",

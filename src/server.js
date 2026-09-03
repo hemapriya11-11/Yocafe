@@ -3,7 +3,6 @@ import cookieParser from "cookie-parser";
 import { port } from "./config/env.js";
 
 import sequelize from "./config/database.js";
-import redisClient from "./config/redis.js";
 
 import authRouter from "./routes/auth.routes.js";
 import { errorHandler } from "./middleware/errorHandler.js";
@@ -31,9 +30,6 @@ try {
 await sequelize.authenticate();
 console.log("MySQL connected");
 
-
-await redisClient.connect();
-console.log("Redis connected");
 
 app.listen(port, () => {
   console.log(
