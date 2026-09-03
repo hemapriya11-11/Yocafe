@@ -1,0 +1,49 @@
+# Dependencies
+
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Environment variables / secrets
+
+.env
+.env.*
+!.env.example
+client/.env
+server/.env
+server/.env.docker
+
+# Build files
+
+dist/
+build/
+client/dist/
+server/dist/
+
+# Logs
+
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# OS files
+
+.DS_Store
+Thumbs.db
+
+# IDE files
+
+.vscode/
+.idea/
+*.swp
+
+# Testing / coverage
+
+coverage/
+
+# Docker volumes
+
+mysql-data/
+redis-data/
